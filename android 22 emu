@@ -1,0 +1,33 @@
+FROM debian:latest
+
+RUN apt-get update && \
+    apt-get install -y wget screen redir openjdk-7-jre-headless libc6-i386 lib32stdc++6 && \
+    apt-get clean && \
+    apt-get autoclean && \
+rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+ENV ANDROID_HOME /opt/android-sdk-linux
+ENV PATH $PATH:${ANDROID_HOME}/tools:$ANDROID_HOME/platform-tools
+
+RUN mkdir -m 0750 /.android
+ADD files/insecure_shared_adbkey /.android/adbkey
+ADD files/insecure_shared_adbkey.pub /.android/adbkey.pub
+
+EXPOSE 5555
+
+RUN wget -qO- "http://dl.google.com/android/android-sdk_r24.3.4-linux.tgz" | tar -zx -C /opt && \
+echo y | android update sdk --no-ui --all --filter platform-tools --force
+
+
+
+RUN echo y | android update sdk --no-ui --filter android-22 --all
+
+RUN echo y | android update sdk --no-ui --filter sys-img-armeabi-v7a-android-22 --all
+
+
+adb start-server
+
+screen -dm emulator64-arm -avd android -noaudio -no-window -gpu off -verbose -qemu
+
+adb start-server
+adb -a

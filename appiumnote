@@ -1,0 +1,122 @@
+appium servu pyörii, emulaattori pyörii, mutta xpath ei toimi
+
+ehkä android 4.1.1?
+
+arm emulointi kontinssa
+--priviliged hw accelerationille? ehkä
+________________
+valmis appium servu : docker run -d -p 4723:4723 -e APPIUM_ARGS="" -v /home/jaakko/CF/instapp/karma/Instapp/instappbuild/Instapp/platforms/android/build/outputs/apk:/apk --name appium softsam/appium
+
+robot testaus android emulaattorilla
+
+ionic emulointi -> appium -> robotframework
+
+konttien päivittely
+
+
+LAITE Galaxy_S6 5.1 tuumaa 1440x2560 api 22 5.1.1 ei kameroita
+
+AVD x86_64 768 mb 100mb SD
+
+emulator -avd Galaxy_S6
+
+npm install appium
+____________
+ANT:
+
+wget http://www.eu.apache.org/dist//ant/binaries/apache-ant-1.9.7-bin.tar.gz
+
+tar -xvzf apache-ant-1.9.7-bin.tar.gz
+
+rm apache-ant-1.9.7-bin.tar.gz
+
+export ANT_HOME="/home/jaakko/CF/instapp/karma/Instapp/instappbuild/Instapp/apache-ant-1.9.7"
+
+export PATH="$PATH:$ANT_HOME/bin"
+
+ant -f fetch.xml -Ddest=system
+
+wget http://www.us.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
+tar -xvzf apache-maven-3.3.9-bin.tar.gz
+rm apache-maven-3.3.9-bin.tar.gz
+
+export MAVEN_HOME="/home/jaakko/CF/instapp/karma/Instapp/instappbuild/Instapp/apache-maven-3.3.9"
+export PATH="$PATH:$MAVEN_HOME/bin"
+
+gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+
+\curl -sSL https://get.rvm.io | bash -s stable --ruby
+
+source /home/jaakko/.rvm/scripts/rvm
+
+gem update --system
+gem install --no-rdoc --no-ri bundler
+gem update
+gem cleanup
+
+sudo apt-get install build-essential curl git m4 python-setuptools ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev
+
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/linuxbrew/go/install)"
+
+export PATH="$PATH:$HOME/.linuxbrew/bin"
+
+brew doctor
+brew install node
+npm install -g grunt grunt-cli
+git clone --branch v1.4.16 git://github.com/appium/appium.git
+./reset.sh —android  --verbose
+
+git clean -dfx
+git reset --hard
+./reset.sh —android  --verbose
+
+node .
+
+
+sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0 lib32stdc++6
+
+apt-get install lib64stdc++6
+
+sudo apt-get install mesa-utils
+
+adb -s emulator-5554 emu kill
+
+platform-tools/adb install /home/jaakko/CF/instapp/karma/Instapp/instappbuild/Instapp/platforms/android/build/outputs/apk/android-debug.apk /sdcard/apk
+
+export ANDROID_HOME=/usr/local/android-sdk-linux
+
+PATH=$PATH:$ANDROID_HOME
+PATH=$PATH:$ANDROID_HOME/tools
+PATH=$PATH:$ANDROID_HOME/platform-tools
+
+./reset.sh —android  --verbose
+
+
+
+cd $ANDROID_HOME/android-sdk-linux_x86/tools/lib64/libstdc++
+mv libstdc++.so.6 libstdc++.so.6.bak
+ln -s /usr/lib64/libstdc++.so.6 $ANDROID_HOME/android-sdk-linux_x86/tools/lib64/libstdc++
+
+apt-get install openjdk-7-jdk 
+
+
+wget https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
+
+tar -xvzf android-sdk_r24.4.1-linux.tgz
+
+
+tools/android create avd --force -n test -t 7
+
+tools/emulator -avd test -no-skin -no-audio -no-window
+
+PANIC :DD
+D
+
+
+docker run --privileged -v ~/docker_test_env/appiumlibrary/emulator/automation:/automation -v /var/lib/docker:/var/lib/docker softsam/android-automator -s 17,21
+_______________________________________________
+
+
+softsam android ja appium
+
+tai ionic run genymotionissa, nää muut emulaattorit on ihan vitusta 
