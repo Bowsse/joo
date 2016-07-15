@@ -1,15 +1,19 @@
 FROM debian:latest
 
 RUN apt-get update && \
-    apt-get install -y wget git sudo nodejs screen curl redir python python-pip make g++ lib32z1 zip unzip openjdk-7-jre-headless libc6-i386 lib32stdc++6 && \
+    apt-get install -y wget git build-essential m4 python-setuptools ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev sudo nodejs screen curl redir python python-pip make g++ lib32z1 zip unzip openjdk-7-jdk libc6-i386 lib32stdc++6 && \
     apt-get clean && \
     apt-get autoclean && \
 rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN export JAVA_HOME="/usr/lib/jvm/java-7-openjdk-amd64"
-RUN export PATH="$PATH:$JAVA_HOME"
+ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
+ENV PATH $PATH:$JAVA_HOME
+ENV ANT_HOME /home/work/apache-ant-1.9.7
+ENV PATH $PATH:$ANT_HOME/bin
+ENV MAVEN_HOME /home/work/apache-maven-3.3.9
+ENV PATH $PATH:$MAVEN_HOME/bin
 ENV ANDROID_HOME /opt/android-sdk-linux
-ENV PATH $PATH:${ANDROID_HOME}/tools:$ANDROID_HOME/platform-tools
+ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
 RUN mkdir -m 0750 /.android
 ADD files/insecure_shared_adbkey /.android/adbkey
@@ -22,37 +26,73 @@ EXPOSE 4723
 RUN wget -qO- "http://dl.google.com/android/android-sdk_r24.3.4-linux.tgz" | tar -zx -C /opt && \
 echo y | android update sdk --no-ui --all --filter platform-tools,build-tools-24.0.0,tools --force
 
+RUN echo y | android update sdk --no-ui
 
 RUN echo y | android update sdk --no-ui --filter android-22 --all
 
 RUN echo y | android update sdk --no-ui --filter android-23 --all
 
+RUN echo y | android update sdk --no-ui --filter android-19 --all
+
+RUN echo y | android update sdk --no-ui --filter android-16 --all
+
 RUN echo y | android update sdk --no-ui --filter sys-img-armeabi-v7a-android-22 --all
 
-#ENV node_version v4.4.7
-#RUN wget -qO- -P /home/appium https://nodejs.org/dist/${node_version}/node-${node_version}.tar.gz | tar -zx -C /#home/appium && \
-#    cd /home/appium/node-${node_version}/ && ./configure --prefix=/home/appium/apps && make && make install && \
-#rm -rf /home/appium/node-${node_version} /tmp/*
 
-RUN mkdir /home/work
-RUN cd /home/work
-RUN wget http://www.eu.apache.org/dist//ant/binaries/apache-ant-1.9.7-bin.tar.gz
+RUN mkdir -p /home/work
+WORKDIR /home/work
+RUN wget http://www.eu.apache.org/dist/ant/binaries/apache-ant-1.9.7-bin.tar.gz
 
 RUN tar -xvzf apache-ant-1.9.7-bin.tar.gz
 RUN rm apache-ant-1.9.7-bin.tar.gz
-RUN export ANT_HOME="$HOME/work/apache-ant-1.9.7"
-RUN export PATH="$PATH:$ANT_HOME/bin"
 
+RUN chmod 755 -R /home/work/apache-ant-1.9.7
+WORKDIR /home/work/apache-ant-1.9.7
 RUN ant -f fetch.xml -Ddest=system
 
-RUN curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
-sudo apt-get install -y nodejs
+WORKDIR /home/work
 
+#RUN curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash - 
+#RUN apt-get install -y nodejs
+
+RUN wget http://www.us.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
+RUN tar -xvzf apache-maven-3.3.9-bin.tar.gz
+RUN rm apache-maven-3.3.9-bin.tar.gz
+
+RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+RUN \curl -sSL https://get.rvm.io | bash -s stable --ruby
+
+RUN source /usr/local/rvm/scripts/rvm
+
+RUN gem update --system
+RUN gem install --no-rdoc --no-ri bundler
+RUN gem update
+RUN gem cleanup
+
+RUN useradd --system -s /sbin/nologin linuxbrew
+USER linuxbrew
+ENV PATH $PATH:~/.linuxbrew/bin:/usr/sbin:/usr/bin:/sbin:/bin  
+RUN source /usr/local/rvm/scripts/rvm
+RUN yes | ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/linuxbrew/go/install)"su
+
+USER root
+WORKDIR /home/work
+RUN chown root -R /home/linuxbrew/.linuxbrew
+ENV PATH $PATH:/home/linuxbrew/.linuxbrew/bin
+RUN brew doctor
+RUN brew update
+RUN brew install node
+
+RUN node --version
+RUN npm --version
 RUN npm install -g grunt grunt-cli
+
+RUN npm install -g cordova ionic
 
 RUN git clone --branch v1.4.16 git://github.com/appium/appium.git
 
-RUN cd appium
+WORKDIR /home/work/appium
+
 RUN ./reset.sh -android --verbose
 
 RUN pip install robotframework
