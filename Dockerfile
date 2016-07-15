@@ -97,6 +97,9 @@ RUN ./reset.sh -android --verbose
 
 RUN pip install robotframework
 RUN pip install robotframework-appiumlibrary
+# echo "deb http://httpredir.debian.org/debian wheezy-backports main" >> /etc/apt/sources.list
+# apt-get update
+# apt-get install -t wheezy-backports libqt5quick5
 
 RUN chmod +x /start.sh
 CMD /start.sh
