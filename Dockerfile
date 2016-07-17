@@ -24,19 +24,19 @@ EXPOSE 5555
 EXPOSE 4723
 
 RUN wget -qO- "http://dl.google.com/android/android-sdk_r24.3.4-linux.tgz" | tar -zx -C /opt && \
-echo y | android update sdk --no-ui --all --filter platform-tools,build-tools-24.0.0,tools --force
+echo y | android update sdk --no-ui --all --filter platform-tools,build-tools-24.0.0,tools,android-22,android-16,android-19,sys-img-armeabi-v7a-android-22 --force
 
-RUN echo y | android update sdk --no-ui
+#RUN echo y | android update sdk --no-ui
 
-RUN echo y | android update sdk --no-ui --filter android-22 --all
+#RUN echo y | android update sdk --no-ui --filter android-22 --all
 
-RUN echo y | android update sdk --no-ui --filter android-23 --all
+#RUN echo y | android update sdk --no-ui --filter android-23 --all
 
-RUN echo y | android update sdk --no-ui --filter android-19 --all
+#RUN echo y | android update sdk --no-ui --filter android-19 --all
 
-RUN echo y | android update sdk --no-ui --filter android-16 --all
+#RUN echo y | android update sdk --no-ui --filter android-16 --all
 
-RUN echo y | android update sdk --no-ui --filter sys-img-armeabi-v7a-android-22 --all
+#RUN echo y | android update sdk --no-ui --filter sys-img-armeabi-v7a-android-22 --all
 
 
 RUN mkdir -p /home/work
@@ -62,18 +62,22 @@ RUN rm apache-maven-3.3.9-bin.tar.gz
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 RUN \curl -sSL https://get.rvm.io | bash -s stable --ruby
 
-RUN source /usr/local/rvm/scripts/rvm
+RUN sed -i "/env bash/c\  #!/usr/bin/bash/" /usr/local/rvm/scripts/rvm
+
+RUN . /usr/local/rvm/scripts/rvm
 
 RUN gem update --system
 RUN gem install --no-rdoc --no-ri bundler
 RUN gem update
 RUN gem cleanup
 
-RUN useradd --system -s /sbin/nologin linuxbrew
+#RUN useradd --system -s /sbin/nologin linuxbrew
+RUN useradd --system -m -s /bin/bash linuxbrew
+#runuser -l linuxbrew ''
 USER linuxbrew
 ENV PATH $PATH:~/.linuxbrew/bin:/usr/sbin:/usr/bin:/sbin:/bin  
-RUN source /usr/local/rvm/scripts/rvm
-RUN yes | ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/linuxbrew/go/install)"su
+RUN . /usr/local/rvm/scripts/rvm
+RUN echo | ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/linuxbrew/go/install)"
 
 USER root
 WORKDIR /home/work
@@ -93,7 +97,7 @@ RUN git clone --branch v1.4.16 git://github.com/appium/appium.git
 
 WORKDIR /home/work/appium
 
-RUN ./reset.sh -android --verbose
+RUN ./reset.sh --android --verbose
 
 RUN pip install robotframework
 RUN pip install robotframework-appiumlibrary
