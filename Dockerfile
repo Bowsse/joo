@@ -1,4 +1,5 @@
 FROM debian:latest
+#RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 RUN apt-get update && \
     apt-get install -y wget git build-essential m4 python-setuptools ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev sudo nodejs screen curl redir python python-pip make g++ lib32z1 zip unzip openjdk-7-jdk libc6-i386 lib32stdc++6 && \
@@ -25,6 +26,8 @@ EXPOSE 4723
 
 RUN wget -qO- "http://dl.google.com/android/android-sdk_r24.3.4-linux.tgz" | tar -zx -C /opt && \
 echo y | android update sdk --no-ui --all --filter platform-tools,build-tools-24.0.0,tools,android-22,android-16,android-19,sys-img-armeabi-v7a-android-22 --force
+echo | android create avd --force -n android -t android-22 --abi armeabi-v7a
+
 
 #RUN echo y | android update sdk --no-ui
 
