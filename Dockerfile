@@ -2,7 +2,7 @@ FROM debian:latest
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 RUN apt-get update && \
-    apt-get install -y wget git build-essential m4 python-setuptools ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev sudo nodejs screen curl redir python python-pip make g++ lib32z1 zip unzip openjdk-7-jdk libc6-i386 lib32stdc++6 && \
+    apt-get install -y wget git mesa-utils build-essential m4 python-setuptools ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev sudo nodejs screen curl redir python python-pip make g++ lib32z1 zip unzip openjdk-7-jdk libc6-i386 lib32stdc++6 && \
     apt-get clean && \
     apt-get autoclean && \
 rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -25,7 +25,7 @@ EXPOSE 5555
 EXPOSE 4723
 
 RUN wget -qO- "http://dl.google.com/android/android-sdk_r24.3.4-linux.tgz" | tar -zx -C /opt && \
-echo y | android update sdk --no-ui --all --filter platform-tools,build-tools-23.0.2,tools,android-22,android-16,android-19,sys-img-armeabi-v7a-android-22 --force
+echo y | android update sdk --no-ui --all --filter platform-tools,build-tools-23.0.2,tools,android-22,android-16,android-19,android-23,sys-img-armeabi-v7a-android-22 --force
 echo | android create avd --force -n android -t android-22 --abi armeabi-v7a
 
 
@@ -107,6 +107,7 @@ RUN pip install robotframework-appiumlibrary
 # echo "deb http://httpredir.debian.org/debian wheezy-backports main" >> /etc/apt/sources.list
 # apt-get update
 # apt-get install -t wheezy-backports libqt5quick5
+#  screen -dm emulator -avd android -noaudio -no-window -gpu off -verbose -engine classic
 
 RUN chmod +x /start.sh
 CMD /start.sh
