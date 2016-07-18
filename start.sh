@@ -6,8 +6,8 @@ cd Instapp
 #latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
 #git checkout $latestTag
 npm install
+ionic platform add android
 ionic resources android
-echo n | cordova platform add android
 ionic state reset -- plugins
 ionic build android
 echo 'Cloning test repo...'
@@ -16,7 +16,7 @@ cd /home/test
 git init
 git remote add -f origin https://github.com/Bowsse/joo.git
 git config core.sparseCheckout true
-echo "robot.txt/" >> .git/info/sparse-checkout
+echo "robot.txt" >> .git/info/sparse-checkout
 git pull origin master
 adb start-server
 screen -dm emulator -avd android -noaudio -no-window -gpu off -verbose -engine classic
