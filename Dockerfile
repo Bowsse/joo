@@ -26,7 +26,7 @@ EXPOSE 4723
 
 RUN wget -qO- "http://dl.google.com/android/android-sdk_r24.3.4-linux.tgz" | tar -zx -C /opt && \
 echo y | android update sdk --no-ui --all --filter platform-tools,build-tools-23.0.2,tools,android-22,android-16,android-19,android-23,sys-img-armeabi-v7a-android-22 --force
-echo | android create avd --force -n android -t android-22 --abi armeabi-v7a
+RUN echo | android create avd --force -n android -t android-22 --abi armeabi-v7a
 
 
 #RUN echo y | android update sdk --no-ui
