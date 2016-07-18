@@ -1,6 +1,4 @@
 #!/bin/bash
-
-
 cd /home/work
 git clone https://github.com/IoTitude/Instapp.git  Instapp
 cd Instapp
@@ -9,10 +7,9 @@ cd Instapp
 #git checkout $latestTag
 npm install
 ionic resources android
-cordova platform add android
+echo n | cordova platform add android
 ionic state reset -- plugins
 ionic build android
-
 echo 'Cloning test repo...'
 mkdir -p /home/test
 cd /home/test
@@ -21,15 +18,10 @@ git remote add -f origin https://github.com/Bowsse/joo.git
 git config core.sparseCheckout true
 echo "robot.txt/" >> .git/info/sparse-checkout
 git pull origin master
-
 adb start-server
 screen -dm emulator -avd android -noaudio -no-window -gpu off -verbose -engine classic
 cd /home/work/appium
 screen -dm node .
-
 cd /home/test
 echo 'Starting robot tests...'
-robot robot.txt
-
-
-
+robot /home/test/robot.txt
